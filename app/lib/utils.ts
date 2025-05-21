@@ -1,11 +1,15 @@
-export const formatAmount = (amount: number, currency: string): string => {
-  const formatter = new Intl.NumberFormat('en-US', {
+export function formatAmount(amount: number, currency: string): string {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+  }).format(amount / 100);
+}
+
+export function formatDate(utcDate: string): string {
+  const date = new Date(utcDate + 'Z'); // Ensure UTC interpretation
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   });
-  
-  // Convert cents to dollars
-  return formatter.format(amount / 100);
-}; 
+} 

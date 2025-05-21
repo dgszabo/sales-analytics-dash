@@ -1,6 +1,6 @@
 'use client';
 
-import { formatAmount } from '@/app/lib/utils';
+import { formatAmount, formatDate } from '@/app/lib/utils';
 
 interface Transaction {
   id: number;
@@ -15,9 +15,20 @@ interface TableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  totalTransactions: number;
+  startIndex: number;
+  endIndex: number;
 }
 
-export default function Table({ transactions, currentPage, totalPages, onPageChange }: TableProps) {
+export default function Table({ 
+  transactions, 
+  currentPage, 
+  totalPages, 
+  onPageChange,
+  totalTransactions,
+  startIndex,
+  endIndex 
+}: TableProps) {
   return (
     <>
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -33,7 +44,7 @@ export default function Table({ transactions, currentPage, totalPages, onPageCha
             {transactions.map((transaction) => (
               <tr key={transaction.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                  {new Date(transaction.date).toLocaleDateString()}
+                  {formatDate(transaction.date)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                   {transaction.customer_name}
@@ -49,7 +60,7 @@ export default function Table({ transactions, currentPage, totalPages, onPageCha
 
       <div className="mt-4 flex justify-between items-center text-gray-900">
         <div>
-          Showing {transactions.length} transactions
+          Showing {startIndex + 1} to {endIndex} of {totalTransactions} transactions
         </div>
         <div className="flex gap-2">
           <button
