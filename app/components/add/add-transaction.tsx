@@ -7,7 +7,6 @@ export default function AddTransaction() {
     customer_name: string;
     amount: number;
     currency: string;
-    date: string;
   }) => {
     const response = await fetch('/api/transactions', {
       method: 'POST',

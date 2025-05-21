@@ -4,10 +4,10 @@ import { dbOps } from '@/app/lib/db';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { customer_name, amount, currency, date } = body;
+    const { customer_name, amount, currency} = body;
 
     // Validate required fields
-    if (!customer_name || amount === undefined || !currency || !date) {
+    if (!customer_name || amount === undefined || !currency) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }

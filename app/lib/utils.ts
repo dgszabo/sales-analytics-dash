@@ -22,12 +22,10 @@ export function generateRandomTransaction() {
   const customer = customers[Math.floor(Math.random() * customers.length)];
   const amount = amounts[Math.floor(Math.random() * amounts.length)];
   const currency = currencies[Math.floor(Math.random() * currencies.length)];
-  const date = new Date().toISOString();
 
   return {
     customer_name: customer,
     amount,
     currency,
-    date
   };
 } 
