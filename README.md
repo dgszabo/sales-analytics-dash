@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sales Analytics Dashboard
 
-## Getting Started
+A real-time sales analytics dashboard built with Next.js, featuring transaction management and real-time updates.
 
-First, run the development server:
+## Setup
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technical Approach
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Architecture
+- **Next.js App Router**: Used for server-side rendering and API routes
+- **Server Components**: Leveraged for better performance and SEO
+- **Client Components**: Used only where interactivity is needed (dashboard, forms)
+- **SQLite**: In-memory database for simplicity and development speed
 
-## Learn More
+### Key Decisions & Trade-offs
 
-To learn more about Next.js, take a look at the following resources:
+1. **Database Choice**
+   - Used SQLite in-memory for simplicity and development speed
+   - Trade-off: Not suitable for production, would need to switch to PostgreSQL/MySQL
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Real-time Updates**
+   - Implemented Server-Sent Events (SSE) for real-time updates
+   - Chose SSE over WebSocket because:
+     - Simpler to implement
+     - One-way communication is sufficient
+     - Better browser support
+     - Automatic reconnection
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **State Management**
+   - Used React's built-in state management
+   - Trade-off: Could use Zustand/Redux for more complex state needs
 
-## Deploy on Vercel
+4. **Styling**
+   - Used Tailwind CSS for rapid development
+   - Trade-off: Larger CSS bundle size
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. **No Tests**
+   - Considering that this is a quick take-home app, no tests were added
+   - But modules were created to make testing easy (like the date and currency formatter modules)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Assumptions & Limitations
+
+1. **Database**
+   - In-memory SQLite database resets on server restart
+   - No data persistence between deployments
+   - No user authentication/authorization
+
+2. **Real-time Updates**
+   - SSE connection might drop in unstable networks
+   - No message queuing for offline clients
+
+3. **Currency Handling**
+   - Amounts stored as integers (cents)
+   - Limited to USD, EUR, GBP currencies (but extendable and decimal places and formatting can be adjusted per currency)
+   - No currency conversion
+
+4. **Performance**
+   - No pagination on the server side
+   - All transactions loaded into memory
+
+## Review Focus Points
+
+1. **Real-time Architecture**
+   - Efficient SSE implementation with minimal server load
+   - Smart client-side state management during updates
+   - Automatic reconnection handling
+
+2. **Currency & Date Handling**
+   - Consistent currency formatting across the app
+   - Proper timezone handling for dates
+   - Integer-based amount storage to avoid floating-point issues
+
+3. **Component Design**
+   - Clean separation of server/client components
+   - Reusable form components with proper validation
+   - Efficient pagination implementation
+
+4. **Performance Considerations**
+   - Minimal client-side JavaScript
+   - Efficient filtering and sorting
+   - Smart use of Server Components
+
+5. **Code Quality**
+   - TypeScript for type safety
+   - Consistent error handling
+   - Clean and maintainable code structure
+
+## Future Improvements
+
+1. **Database**
+   - Implement proper database with persistence
+   - Add user authentication
+   - Add database migrations
+
+2. **Features**
+   - Add transaction editing/deletion
+   - Implement server-side pagination
+   - Add date range filtering
+
+3. **Performance**
+   - Implement proper caching
+   - Add loading states
+   - Optimize bundle size
+
+4. **Testing**
+   - Add unit tests
+   - Add integration tests
+   - Add E2E tests
