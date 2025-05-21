@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import { generateRandomTransaction } from '@/app/lib/utils';
 
 // Types
 export interface Transaction {
@@ -38,17 +39,10 @@ export const dbOps = {
 // Clear existing data
 db.exec('DELETE FROM transactions');
 
-// Load test data
-const customers = ['John Smith', 'Alice Johnson', 'Bob Wilson', 'Emma Davis', 'Mike Brown'];
-const amounts = [9999, 14950, 29999, 4999, 19999, 7999, 12999, 8999];
-const currencies = ['USD', 'EUR', 'GBP'];
-
-// Insert 100 test records
+// Load initial test data
 for (let i = 0; i < 100; i++) {
-  const customer = customers[Math.floor(Math.random() * customers.length)];
-  const amount = amounts[Math.floor(Math.random() * amounts.length)];
-  const currency = currencies[Math.floor(Math.random() * currencies.length)];
-  dbOps.createTransaction(customer, amount, currency);
+  const { customer_name, amount, currency } = generateRandomTransaction();
+  dbOps.createTransaction(customer_name, amount, currency);
 }
 
 export default db;

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { formatAmount } from '@/app/lib/utils';
-import TotalRevenue from './total-revenue';
-import Search from './search';
-import Table from './table';
+import { generateRandomTransaction } from '@/app/lib/utils';
+import TotalRevenue from '@/app/components/dashboard/total-revenue';
+import Search from '@/app/components/dashboard/search';
+import Table from '@/app/components/dashboard/table';
 import Link from 'next/link';
 
 interface DashboardProps {
@@ -20,10 +20,57 @@ interface Transaction {
 }
 
 export default function Dashboard({ initialTransactions }: DashboardProps) {
-  const [transactions] = useState<Transaction[]>(initialTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 25;
+  const [isAddingRandom, setIsAddingRandom] = useState(false);
+  const rowsPerPage = 15;
+
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch('/api/transactions');
+      if (!response.ok) throw new Error('Failed to fetch transactions');
+      const data = await response.json();
+      setTransactions(data);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const addRandomTransaction = async () => {
+    setIsAddingRandom(true);
+    try {
+      const randomTransaction = generateRandomTransaction();
+      const response = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(randomTransaction),
+      });
+      if (!response.ok) throw new Error('Failed to add random transaction');
+      await fetchTransactions();
+    } catch (error) {
+      console.error('Error adding random transaction:', error);
+    } finally {
+      setIsAddingRandom(false);
+    }
+  };
+
+  useEffect(() => {
+    const evtSource = new EventSource('/api/realtime');
+
+    evtSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'new_transaction') {
+        fetchTransactions();
+      }
+    };
+
+    return () => {
+      evtSource.close();
+    };
+  }, []);
 
   // Filter transactions based on search term
   const filteredTransactions = transactions.filter(transaction =>
@@ -47,12 +94,21 @@ export default function Dashboard({ initialTransactions }: DashboardProps) {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
-            <Link
-              href="/add"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Add Transaction
-            </Link>
+            <div className="flex gap-2">
+              <button
+                onClick={addRandomTransaction}
+                disabled={isAddingRandom}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50"
+              >
+                {isAddingRandom ? 'Adding...' : 'Add Random'}
+              </button>
+              <Link
+                href="/add"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+              >
+                Add Transaction
+              </Link>
+            </div>
           </div>
           <TotalRevenue transactions={transactions} />
         </div>

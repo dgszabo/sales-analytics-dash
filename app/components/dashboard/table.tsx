@@ -59,21 +59,24 @@ export default function Table({
       </div>
 
       <div className="mt-4 flex justify-between items-center text-gray-900">
-        <div>
-          Showing {startIndex + 1} to {endIndex} of {totalTransactions} transactions
+        <div className="text-sm text-gray-700">
+          {totalTransactions === 0 
+            ? 'Showing 0 transactions'
+            : `Showing ${startIndex + 1} to ${endIndex} of ${totalTransactions} transactions`
+          }
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 border rounded disabled:opacity-50 bg-white text-gray-900 hover:bg-gray-50"
+            className={`px-4 py-2 border rounded disabled:opacity-50 bg-white text-gray-900 hover:bg-gray-50 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             Previous
           </button>
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border rounded disabled:opacity-50 bg-white text-gray-900 hover:bg-gray-50"
+            className={`px-4 py-2 border rounded disabled:opacity-50 bg-white text-gray-900 hover:bg-gray-50 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             Next
           </button>
