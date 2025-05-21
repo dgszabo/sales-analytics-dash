@@ -5,6 +5,7 @@ import { formatAmount } from '@/app/lib/utils';
 import TotalRevenue from './total-revenue';
 import Search from './search';
 import Table from './table';
+import Link from 'next/link';
 
 interface DashboardProps {
   initialTransactions: Transaction[];
@@ -44,7 +45,15 @@ export default function Dashboard({ initialTransactions }: DashboardProps) {
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-4 text-gray-900">Sales Dashboard</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
+            <Link
+              href="/add"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Add Transaction
+            </Link>
+          </div>
           <TotalRevenue transactions={transactions} />
         </div>
         <div className="mt-8">
